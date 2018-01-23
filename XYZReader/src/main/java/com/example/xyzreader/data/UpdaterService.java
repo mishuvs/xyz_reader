@@ -55,7 +55,8 @@ public class UpdaterService extends IntentService {
         cpo.add(ContentProviderOperation.newDelete(dirUri).build());
 
         try {
-            JSONArray array = RemoteEndpointUtil.fetchJsonArray();
+            JSONObject response = RemoteEndpointUtil.fetchJson().getJSONObject("response");
+            JSONArray array = response.getJSONArray("results");
             if (array == null) {
                 throw new JSONException("Invalid parsed item array" );
             }
@@ -63,15 +64,17 @@ public class UpdaterService extends IntentService {
             for (int i = 0; i < array.length(); i++) {
                 ContentValues values = new ContentValues();
                 JSONObject object = array.getJSONObject(i);
-                values.put(ItemsContract.Items.SERVER_ID, object.getString("id" ));
-                values.put(ItemsContract.Items.AUTHOR, object.getString("author" ));
-                values.put(ItemsContract.Items.TITLE, object.getString("title" ));
-                values.put(ItemsContract.Items.BODY, object.getString("body" ));
-                values.put(ItemsContract.Items.THUMB_URL, object.getString("thumb" ));
-                values.put(ItemsContract.Items.PHOTO_URL, object.getString("photo" ));
-                values.put(ItemsContract.Items.ASPECT_RATIO, object.getString("aspect_ratio" ));
-                values.put(ItemsContract.Items.PUBLISHED_DATE, object.getString("published_date"));
-                cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
+                if(object.getJSONObject("fields").has("body") ||  object.getJSONObject("fields").has("thumbnail")) {
+                    values.put(ItemsContract.Items.SERVER_ID, object.getString("id" ));
+                    values.put(ItemsContract.Items.AUTHOR, "");
+                    values.put(ItemsContract.Items.TITLE, object.getString("webTitle" ));
+                    values.put(ItemsContract.Items.BODY, object.getJSONObject("fields").getString("body" ));
+                    values.put(ItemsContract.Items.THUMB_URL, object.getJSONObject("fields").getString("thumbnail" ));
+                    values.put(ItemsContract.Items.PHOTO_URL, object.getJSONObject("fields").getString("thumbnail" ));
+//                    values.put(ItemsContract.Items.ASPECT_RATIO, object.getString("aspect_ratio" ));
+                    values.put(ItemsContract.Items.PUBLISHED_DATE, object.getString("webPublicationDate"));
+                    cpo.add(ContentProviderOperation.newInsert(dirUri).withValues(values).build());
+                }
             }
 
             getContentResolver().applyBatch(ItemsContract.CONTENT_AUTHORITY, cpo);
