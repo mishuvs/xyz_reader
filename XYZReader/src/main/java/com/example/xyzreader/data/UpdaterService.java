@@ -64,7 +64,7 @@ public class UpdaterService extends IntentService {
             for (int i = 0; i < array.length(); i++) {
                 ContentValues values = new ContentValues();
                 JSONObject object = array.getJSONObject(i);
-                if(object.getJSONObject("fields").has("body") ||  object.getJSONObject("fields").has("thumbnail")) {
+                if(object.getJSONObject("fields").has("body") &&  object.getJSONObject("fields").has("thumbnail")) {
                     values.put(ItemsContract.Items.SERVER_ID, object.getString("id" ));
                     values.put(ItemsContract.Items.AUTHOR, "");
                     values.put(ItemsContract.Items.TITLE, object.getString("webTitle" ));
