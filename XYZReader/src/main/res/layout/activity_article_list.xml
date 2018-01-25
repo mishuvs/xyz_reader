@@ -25,7 +25,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
                 android:layout_marginLeft="12dp"
-                android:src="@drawable/logo"
+                android:src="@drawable/guardian_logo"
                 app:layout_collapseMode="parallax" />
 
 
