@@ -1,5 +1,16 @@
-# XYZ Reader 
-**Created as a part of Udacity [Android Developer Nanodegree Program](https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801).**
+# Material News Reader
+Originally **XYZ Reader**, which I had refined as a part of Udacity [Android Developer Nanodegree Program](https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801).<br>
+**I further modified the app to fetch news from The Guardian, instead of (earlier) static articles.**
+
+## Screenshots
+<table>
+  <tr>
+    <td><img src="screenshots/home.png"></td>
+    <td><img src="screenshots/detail.png"></td>
+    <td><img src="screenshots/detail_slide.png"></td>
+    <td><img src="screenshots/detail_collapsed.png"></td>
+  </tr>
+</table>
 
 ## Project Overview
 In this project, I redesigned an app to follow the Material Design guidelines and translated a set of static design mocks to a living and breathing app.
