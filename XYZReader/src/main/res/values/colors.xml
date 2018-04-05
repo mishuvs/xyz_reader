@@ -30,4 +30,6 @@
 
     <color name="text_primary_color">#212121</color>
     <color name="text_secondary_color">#757575</color>
+    <color name="menu_icon_color">#FFFFFF</color>
+    <color name="menu_text_color">#FFFFFF</color>
 </resources>
