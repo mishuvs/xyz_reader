@@ -7,14 +7,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -27,8 +32,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
@@ -206,7 +216,7 @@ public class ArticleListActivity extends AppCompatActivity implements
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, int position) {
             mCursor.moveToPosition(position);
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
             Date publishedDate = parsePublishedDate();
@@ -221,8 +231,30 @@ public class ArticleListActivity extends AppCompatActivity implements
             ));
             Glide.with(ArticleListActivity.this)
                     .load(mCursor.getString(ArticleLoader.Query.THUMB_URL))
-                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.RESOURCE))
-                    .into(holder.thumbnailView);
+                    .apply(new RequestOptions()
+                            .priority(Priority.IMMEDIATE)
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            BitmapDrawable bitmapDrawable = (BitmapDrawable) resource;
+                            Bitmap bitmap = bitmapDrawable.getBitmap();
+                            if (bitmap != null) {
+                                Palette.Swatch swatch = Palette.from(bitmap).generate().getDominantSwatch();
+                                if(swatch != null){
+                                    holder.itemView.setBackgroundColor(swatch.getRgb());
+                                    holder.titleView.setTextColor(swatch.getTitleTextColor());
+                                    holder.subtitleView.setTextColor(swatch.getTitleTextColor());
+                                }
+                            }
+                            return false;
+                        }
+                    }).into(holder.thumbnailView);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.thumbnailView.setTransitionName(holder.titleView.getText().toString());

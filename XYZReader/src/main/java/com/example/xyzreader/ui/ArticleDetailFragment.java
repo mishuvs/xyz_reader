@@ -186,8 +186,8 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
-        TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
+        final TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
+        final TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
 
@@ -229,10 +229,15 @@ public class ArticleDetailFragment extends Fragment implements
                             BitmapDrawable bitmapDrawable = (BitmapDrawable) resource;
                             Bitmap bitmap = bitmapDrawable.getBitmap();
                             if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
-                                mMutedColor = p.getDarkMutedColor(0xFF333333);
-                                mRootView.findViewById(R.id.meta_bar)
-                                        .setBackgroundColor(mMutedColor);
+//                                mMutedColor = Palette.from(bitmap).generate().getDarkMutedColor(0xFF333333);
+                                Palette.Swatch swatch = Palette.from(bitmap).generate().getDominantSwatch();
+                                if(swatch != null){
+                                    mRootView.findViewById(R.id.meta_bar)
+//                                        .setBackgroundColor(mMutedColor);
+                                            .setBackgroundColor(swatch.getRgb());
+                                    titleView.setTextColor(swatch.getTitleTextColor());
+                                    bylineView.setTextColor(swatch.getTitleTextColor());
+                                }
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                     mPhotoView.setTransitionName(mCursor.getString(ArticleLoader.Query.TITLE));
                                 }
