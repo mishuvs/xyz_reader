@@ -5,7 +5,10 @@ Originally **XYZ Reader**, which I had refined as a part of Udacity [Android Dev
 ## Screenshots
 <table>
   <tr>
+    <td><img src="screenshots/gif.gif"/></td>
     <td><img src="screenshots/home.png"></td>
+  </tr>
+  <tr>
     <td><img src="screenshots/detail.png"></td>
     <td><img src="screenshots/detail_slide.png"></td>
     <td><img src="screenshots/detail_collapsed.png"></td>
