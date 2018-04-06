@@ -70,6 +70,8 @@ ArticleDetailActivity extends AppCompatActivity
                 mSelectedItemId = mStartId;
             }
         }
+
+        supportPostponeEnterTransition();
     }
 
     @Override

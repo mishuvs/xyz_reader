@@ -15,11 +15,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ShareCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -29,11 +31,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
@@ -210,7 +215,9 @@ public class ArticleDetailFragment extends Fragment implements
             Glide.with(this)
                     .load(mCursor.getString(ArticleLoader.Query.PHOTO_URL))
                     .apply(new RequestOptions()
-                            .fitCenter())
+                            .fitCenter()
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                            .priority(Priority.IMMEDIATE))
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -226,6 +233,10 @@ public class ArticleDetailFragment extends Fragment implements
                                 mMutedColor = p.getDarkMutedColor(0xFF333333);
                                 mRootView.findViewById(R.id.meta_bar)
                                         .setBackgroundColor(mMutedColor);
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    mPhotoView.setTransitionName(mCursor.getString(ArticleLoader.Query.TITLE));
+                                }
+                                startTransition();
                             }
                             return false;
                         }
@@ -258,7 +269,6 @@ public class ArticleDetailFragment extends Fragment implements
             mCursor.close();
             mCursor = null;
         }
-        Log.i("haha","Load finished");
         bindViews();
     }
 
@@ -266,5 +276,16 @@ public class ArticleDetailFragment extends Fragment implements
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mCursor = null;
         bindViews();
+    }
+
+    private void startTransition(){
+        mPhotoView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mPhotoView.getViewTreeObserver().removeOnPreDrawListener(this);
+                ((AppCompatActivity)getActivity()).supportStartPostponedEnterTransition();
+                return true;
+            }
+        });
     }
 }
