@@ -33,6 +33,9 @@ proguard/
 captures/
 
 # Intellij
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/caches
 *.iml
 .idea/workspace.xml
 
