@@ -1,6 +1,4 @@
 # Material News Reader
-Originally **XYZ Reader**, which I had refined as a part of Udacity [Android Developer Nanodegree Program](https://www.udacity.com/course/android-developer-nanodegree-by-google--nd801).<br>
-**I further modified the app to fetch news from The Guardian, instead of (earlier) static articles.**
 
 ## Screenshots
 <table>
